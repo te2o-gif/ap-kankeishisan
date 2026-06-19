@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>関係資産型CS・運用 — AP戦略ドキュメント</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --primary:#1B2F6B;
+  --primary-light:#2A4099;
+  --accent:#E85D26;
+  --green:#1A7A4A;
+  --green-light:#27AE60;
+  --bg:#F4F6FA;
+  --white:#FFFFFF;
+  --text:#1A1A2E;
+  --text2:#4A5568;
+  --border:#E2E8F0;
+  --sh:0 2px 12px rgba(27,47,107,0.08);
+  --sh-md:0 4px 24px rgba(27,47,107,0.12);
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);line-height:1.8;font-size:15px}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;width:220px;height:100vh;background:var(--primary);overflow-y:auto;z-index:100;padding:20px 0}
+.nav-logo{padding:0 18px 20px;border-bottom:1px solid rgba(255,255,255,0.1);margin-bottom:12px}
+.nav-logo .co{font-size:10px;opacity:.5;letter-spacing:2px;text-transform:uppercase;color:#fff}
+.nav-logo .tl{font-size:13px;font-weight:700;margin-top:4px;line-height:1.4;color:#fff}
+.nav-sec{padding:10px 18px 3px;font-size:10px;opacity:.4;letter-spacing:1px;text-transform:uppercase;font-weight:700;color:#fff}
+.nav a{display:block;padding:7px 18px;color:rgba(255,255,255,.65);text-decoration:none;font-size:12.5px;transition:.2s;border-left:3px solid transparent}
+.nav a:hover,.nav a.active{color:#fff;background:rgba(255,255,255,.08);border-left-color:var(--accent)}
+
+/* MAIN */
+.main{margin-left:220px;min-height:100vh}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,var(--primary) 0%,var(--primary-light) 60%,#3A5FBB 100%);color:#fff;padding:56px 48px}
+.hero-tag{display:inline-block;background:var(--accent);color:#fff;font-size:10px;font-weight:700;letter-spacing:2px;padding:3px 10px;border-radius:3px;margin-bottom:18px;text-transform:uppercase}
+.hero h1{font-size:30px;font-weight:800;line-height:1.35;margin-bottom:14px}
+.hero h1 em{color:#FFD166;font-style:normal}
+.hero-sub{font-size:15px;opacity:.82;max-width:580px;line-height:1.75}
+.hero-meta{margin-top:28px;display:flex;gap:20px;font-size:12px;opacity:.55}
+
+/* CONTENT */
+.content{padding:48px;max-width:880px}
+
+/* SECTION */
+.section{margin-bottom:60px}
+.sec-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+h2{font-size:22px;font-weight:800;color:var(--primary);margin-bottom:14px;line-height:1.3}
+h3{font-size:17px;font-weight:700;color:var(--primary);margin-bottom:10px;margin-top:28px}
+h4{font-size:14px;font-weight:700;color:var(--text);margin-bottom:7px;margin-top:16px}
+p{margin-bottom:10px;color:var(--text2)}
+
+/* CARD */
+.card{background:#fff;border-radius:10px;padding:24px;box-shadow:var(--sh);margin-bottom:14px}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin:20px 0}
+
+/* HIGHLIGHT */
+.hl{border-left:4px solid var(--primary);border-radius:0 8px 8px 0;padding:18px 22px;margin:20px 0;background:linear-gradient(135deg,#EEF2FF,#E0E7FF)}
+.hl.accent{background:linear-gradient(135deg,#FFF3ED,#FFE8D6);border-left-color:var(--accent)}
+.hl.green{background:linear-gradient(135deg,#EDFAF4,#D4F1E4);border-left-color:var(--green-light)}
+.hl strong{display:block;font-size:15px;font-weight:800;color:var(--primary);margin-bottom:5px}
+.hl.accent strong{color:#C04A1A}
+.hl.green strong{color:#1A5C36}
+
+/* LIST */
+ul.sl{list-style:none;margin:10px 0 16px}
+ul.sl li{padding:5px 0 5px 18px;position:relative;color:var(--text2);border-bottom:1px solid var(--border);font-size:14px}
+ul.sl li:last-child{border-bottom:none}
+ul.sl li::before{content:'▸';position:absolute;left:0;color:var(--accent);font-size:11px;top:7px}
+
+/* MECH CARDS */
+.mech{background:#fff;border-radius:10px;overflow:hidden;box-shadow:var(--sh);margin-bottom:20px}
+.mech-hd{padding:18px 24px;display:flex;align-items:center;gap:14px}
+.mech-num{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.2);color:#fff;font-weight:800;font-size:17px;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:2px solid rgba(255,255,255,.4)}
+.mech-hd h3{color:#fff;margin:0;font-size:16px}
+.mech-hd p{color:rgba(255,255,255,.75);font-size:12px;margin:2px 0 0}
+.mech-bd{padding:20px 24px}
+
+/* DIAG */
+.diag-group{margin-bottom:24px}
+.dg-label{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:5px 10px;border-radius:4px;display:inline-block;margin-bottom:10px}
+.diag-item{background:var(--bg);border-radius:8px;padding:12px 14px;margin-bottom:6px;display:flex;gap:10px;align-items:flex-start}
+.d-num{background:var(--primary);color:#fff;width:22px;height:22px;border-radius:50%;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.d-text{color:var(--text2);font-size:13.5px;line-height:1.7}
+
+/* TABLE */
+table.t{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px}
+table.t th{background:var(--primary);color:#fff;padding:9px 13px;text-align:left;font-weight:600}
+table.t td{padding:9px 13px;border-bottom:1px solid var(--border);color:var(--text2)}
+table.t tr:nth-child(even) td{background:var(--bg)}
+
+/* MATRIX */
+.matrix{display:grid;grid-template-columns:1fr 1fr;gap:3px;background:var(--border);border-radius:12px;overflow:hidden;margin:20px 0}
+.mx{background:#fff;padding:18px}
+.mx.target{background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff}
+.mx .type-tag{font-size:10px;font-weight:700;letter-spacing:.5px;margin-bottom:5px;opacity:.65}
+.mx.target .type-tag{color:rgba(255,255,255,.7)}
+.mx h4{margin:0 0 5px;font-size:14px}
+.mx.target h4{color:#FFD166}
+.mx p{font-size:13px;margin:0}
+.mx.target p{color:rgba(255,255,255,.8)}
+.mat-axis{text-align:center;font-size:12px;color:var(--text2);padding:5px}
+.mat-sides{display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-top:3px;padding:0 6px}
+
+/* FLOW */
+.flow{display:flex;gap:0;align-items:center;flex-wrap:wrap;margin:20px 0}
+.flow-step{background:#fff;border:2px solid var(--border);border-radius:7px;padding:10px 16px;font-size:13px;font-weight:600;color:var(--primary);white-space:nowrap}
+.flow-arrow{padding:0 7px;color:var(--accent);font-size:18px;font-weight:700}
+
+/* STEPS */
+.steps{position:relative;padding-left:28px}
+.steps::before{content:'';position:absolute;left:10px;top:0;bottom:0;width:2px;background:var(--border)}
+.step{position:relative;padding:0 0 24px}
+.step::before{content:'';position:absolute;left:-22px;top:5px;width:10px;height:10px;border-radius:50%;background:var(--accent);border:2px solid #fff;box-shadow:0 0 0 2px var(--accent)}
+.step-lbl{font-size:10px;font-weight:700;letter-spacing:1px;color:var(--accent);text-transform:uppercase;margin-bottom:3px}
+.step h4{margin:0 0 4px;color:var(--primary)}
+.step p{margin:0;font-size:13.5px}
+
+/* TWO-COL */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0}
+.col-card{background:#fff;border-radius:10px;padding:18px;box-shadow:var(--sh)}
+.col-card.ai{border-top:3px solid #2980B9}
+.col-card.human{border-top:3px solid var(--green-light)}
+.col-card.both{border-top:3px solid var(--accent)}
+.col-card h4{font-size:13.5px;margin-bottom:8px;display:flex;align-items:center;gap:7px}
+.badge{font-size:10px;padding:2px 7px;border-radius:3px;font-weight:700}
+.col-card.ai h4 .badge{background:#E3F2FD;color:#1565C0}
+.col-card.human h4 .badge{background:#E8F5E9;color:#2E7D32}
+.col-card.both h4 .badge{background:#FFF3E0;color:#C04A1A}
+
+/* DIVIDER */
+hr.div{border:none;border-top:2px solid var(--border);margin:44px 0}
+
+/* EVOLUTION */
+.evo{display:grid;grid-template-columns:1fr 36px 1fr;align-items:center;margin:20px 0}
+.evo-card{background:#fff;border-radius:10px;padding:20px;box-shadow:var(--sh)}
+.evo-card.before{border-top:3px solid #95A5A6}
+.evo-card.after{border-top:3px solid var(--accent)}
+.evo-lbl{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}
+.evo-card.before .evo-lbl{color:#95A5A6}
+.evo-card.after .evo-lbl{color:var(--accent)}
+.evo-arrow{text-align:center;font-size:22px;color:var(--accent)}
+
+/* AXIS CARDS */
+.axis-card{background:#fff;border-radius:10px;padding:18px 22px;box-shadow:var(--sh);margin-bottom:14px;display:grid;grid-template-columns:46px 1fr;gap:14px;align-items:flex-start}
+.axis-num{width:46px;height:46px;border-radius:10px;background:var(--primary);color:#fff;font-size:18px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.axis-content h4{margin:0 0 5px}
+.axis-content p{margin:0;font-size:13.5px}
+
+/* RESULT GRID */
+.result-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:16px 0}
+.result-item{background:#fff;border-radius:10px;padding:14px 10px;box-shadow:var(--sh);text-align:center}
+.result-item .num{font-size:26px;font-weight:800;color:var(--primary);line-height:1;margin-bottom:5px}
+.result-item .lbl{font-size:12px;color:var(--text2);line-height:1.4}
+
+/* TAG LIST */
+.tags{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0 16px}
+.tag{background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:3px 11px;font-size:12.5px;color:var(--text2)}
+.tag.p{background:#EEF2FF;border-color:#BCC9F7;color:var(--primary)}
+.tag.a{background:#FFF3ED;border-color:#FFD4BC;color:#C04A1A}
+.tag.g{background:#EDFAF4;border-color:#A8E6C4;color:#1A5C36}
+
+/* FOOTER */
+.footer{background:var(--primary);color:#fff;padding:28px 48px;margin-top:40px}
+.footer p{color:rgba(255,255,255,.55);font-size:12.5px}
+
+@media(max-width:768px){
+  .nav{display:none}.main{margin-left:0}.content{padding:20px}
+  .two-col,.evo,.result-grid{grid-template-columns:1fr}
+  .evo-arrow{transform:rotate(90deg)}
+  .matrix{grid-template-columns:1fr}
+  .result-grid{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">
+    <div class="co">Artpeace</div>
+    <div class="tl">関係資産型<br>CS・運用戦略</div>
+  </div>
+  <div class="nav-sec">概要</div>
+  <a href="#positioning">APのポジショニング</a>
+  <a href="#kankeishisan">関係資産とは</a>
+  <div class="nav-sec">3つの仕組み</div>
+  <a href="#shikumi">仕組みの全体像</a>
+  <a href="#shindan">① AI代替リスク診断</a>
+  <a href="#yakuwari">② 役割分担設計</a>
+  <a href="#report">③ 関係資産レポート</a>
+  <div class="nav-sec">サービス</div>
+  <a href="#dosen">サービス導線</a>
+  <a href="#value">提供価値</a>
+  <div class="nav-sec">Kenshin</div>
+  <a href="#kenshin-evo">Kenshinの進化</a>
+  <a href="#kenshin-5">5つの診断軸</a>
+  <a href="#kenshin-type">4タイプ分類</a>
+  <a href="#kenshin-result">診断結果の設計</a>
+  <a href="#kenshin-def">Kenshinの定義</a>
+</nav>
+
+<main class="main">
+
+<div class="hero">
+  <div class="hero-tag">AP Strategy 2025</div>
+  <h1>AIで効率化し、<br>人との関係を<em>資産</em>に変える。</h1>
+  <p class="hero-sub">生成AIによって成果物は速く安く作れるようになる時代に、APは「関係資産型CS・運用パートナー」として、AIと人の役割を整理し、顧客との関係と運用ノウハウが継続的に蓄積される仕組みを設計する。</p>
+  <div class="hero-meta"><span>Artpeace株式会社</span><span>2025年</span></div>
+</div>
+
+<div class="content">
+
+<!-- POSITIONING -->
+<div class="section" id="positioning">
+  <div class="sec-label">Positioning</div>
+  <h2>APのポジショニング</h2>
+  <div class="hl">
+    <strong>「AI時代の関係資産型CS・運用パートナー」</strong>
+    生成AIによって、文章・分析・企画・コンテンツなどの成果物は、今後さらに速く、安く作れるようになる。成果物の品質や作業量だけで勝負すると、AIや他社との価格・スピード競争に巻き込まれてしまう。
+  </div>
+  <p>APはAIと戦うのではなく、<strong>AIで作業を効率化し、そこで生まれた余白を、顧客理解・利用定着・信頼形成・継続的な改善に再投資する会社</strong>として位置づける。</p>
+  <div class="card-grid">
+    <div class="card">
+      <h4>AIが担う</h4>
+      <ul class="sl">
+        <li>文章・コンテンツ作成</li>
+        <li>情報整理・分析</li>
+        <li>定型業務の処理</li>
+        <li>データの集計・可視化</li>
+        <li>問い合わせの一次対応</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>人が担う</h4>
+      <ul class="sl">
+        <li>顧客の背景を理解する</li>
+        <li>関係者の意見を調整する</li>
+        <li>重要な判断をする</li>
+        <li>顧客と一緒に改善する</li>
+        <li>約束に責任を持つ</li>
+        <li>信頼関係を積み重ねる</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- KANKEISHISAN -->
+<div class="section" id="kankeishisan">
+  <div class="sec-label">Core Concept</div>
+  <h2>関係資産とは</h2>
+  <p>顧客との対話・共創・運用の積み重ねによって生まれる、AIや他社には短期間で代替できない事業資産のこと。</p>
+  <div class="tags">
+    <span class="tag p">顧客への深い理解</span>
+    <span class="tag p">築いてきた信頼</span>
+    <span class="tag p">一緒に課題を乗り越えた経験</span>
+    <span class="tag p">改善してきた履歴</span>
+    <span class="tag p">人的なつながり</span>
+    <span class="tag p">顧客固有の現場ノウハウ</span>
+  </div>
+  <div class="hl green">
+    <strong>なぜ「資産」なのか</strong>
+    AIが情報として整理することはできても、実際に顧客と時間を共有し、約束を守り、改善を重ねてきた事実そのものを、短期間で再現することはできない。運用を続けるほど価値が蓄積される、APならではの競争優位性となる。
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- SHIKUMI OVERVIEW -->
+<div class="section" id="shikumi">
+  <div class="sec-label">3 Mechanisms</div>
+  <h2>理念をサービスにする3つの仕組み</h2>
+  <div class="flow">
+    <div class="flow-step">診断</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">役割設計</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">運用</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">可視化</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">改善</div>
+  </div>
+
+  <div class="mech">
+    <div class="mech-hd" style="background:linear-gradient(135deg,#1B2F6B,#2A4099)">
+      <div class="mech-num">①</div>
+      <div>
+        <h3>AI代替リスク・関係資産診断シート</h3>
+        <p>AIや他社への代替リスクと、顧客との間に蓄積されている関係資産を可視化する</p>
+      </div>
+    </div>
+    <div class="mech-bd">
+      <p>現在のサービスがどれくらいAIや他社に代替されやすいかを確認し、何をAIに任せるか・何を人が担うか・どの関係資産を優先的に強化するかを明確にする。</p>
+    </div>
+  </div>
+
+  <div class="mech">
+    <div class="mech-hd" style="background:linear-gradient(135deg,#C0392B,#E74C3C)">
+      <div class="mech-num">②</div>
+      <div>
+        <h3>AI／人間の役割分担テンプレート</h3>
+        <p>顧客接点ごとに、AI・人・共同の役割を決める</p>
+      </div>
+    </div>
+    <div class="mech-bd">
+      <p>問い合わせ・オンボーディング・定例会・トラブル対応・更新提案など、顧客接点ごとにAIと人の役割を整理。高頻度・低リスクの業務はAIへ、感情・例外・重要判断・責任を伴う場面は人へ。</p>
+    </div>
+  </div>
+
+  <div class="mech">
+    <div class="mech-hd" style="background:linear-gradient(135deg,#1A7A4A,#27AE60)">
+      <div class="mech-num">③</div>
+      <div>
+        <h3>関係資産・成果レポート</h3>
+        <p>作業量だけでなく、蓄積された成果と関係資産を毎月可視化する</p>
+      </div>
+    </div>
+    <div class="mech-bd">
+      <p>「何件対応したか」だけではなく、AIで生まれた時間・その再投資先・新しく理解できた顧客背景・守った約束など、目に見えにくい価値をクライアントに見える形で報告する。</p>
+    </div>
+  </div>
+</div>
+
+<!-- SHINDAN -->
+<div class="section" id="shindan">
+  <div class="sec-label">Mechanism ①</div>
+  <h2>AI代替リスク・関係資産診断</h2>
+  <p>15問の診断で、代替リスクと関係資産の現状を可視化する。</p>
+  <div class="two-col" style="margin-bottom:20px">
+    <div class="card">
+      <h4>AI・他社代替リスク（3問）</h4>
+      <p style="font-size:13px">1〜5の5段階評価<br>1：ほとんど当てはまらない → 5：強く当てはまる</p>
+    </div>
+    <div class="card">
+      <h4>関係資産の蓄積度（12問）</h4>
+      <p style="font-size:13px">1〜5の5段階評価<br>1：まったくできていない → 5：仕組みとして定着している</p>
+    </div>
+  </div>
+
+  <h3>A. AI・他社への代替リスク</h3>
+  <div class="diag-group">
+    <span class="dg-label" style="background:#FFF3ED;color:var(--accent)">RISK</span>
+    <div class="diag-item">
+      <div class="d-num" style="background:var(--accent)">1</div>
+      <div class="d-text">顧客が自社を選ぶ理由が、成果物の品質・量・スピード・価格に偏っている。</div>
+    </div>
+    <div class="diag-item">
+      <div class="d-num" style="background:var(--accent)">2</div>
+      <div class="d-text">顧客固有の背景、過去の経緯、現場事情を深く理解していなくても、同等のサービスを提供できる。</div>
+    </div>
+    <div class="diag-item">
+      <div class="d-num" style="background:var(--accent)">3</div>
+      <div class="d-text">より安く、速く成果物を提供するAIや競合が現れた場合、顧客から選ばれ続ける明確な理由が少ない。</div>
+    </div>
+  </div>
+
+  <h3>B〜G. 関係資産の蓄積度</h3>
+
+  <div class="diag-group">
+    <span class="dg-label" style="background:#EEF2FF;color:var(--primary)">B. 顧客との関係性</span>
+    <div class="diag-item"><div class="d-num">4</div><div class="d-text">窓口担当者だけでなく、利用者・決裁者・関係部署など、複数の関係者との接点を持っている。</div></div>
+    <div class="diag-item"><div class="d-num">5</div><div class="d-text">顧客の業務課題だけでなく、大切にしている価値観、目標、不安、意思決定の進み方まで理解している。</div></div>
+  </div>
+
+  <div class="diag-group">
+    <span class="dg-label" style="background:#EEF2FF;color:var(--primary)">C. 顧客との共創</span>
+    <div class="diag-item"><div class="d-num">6</div><div class="d-text">顧客は完成したサービスを受け取るだけでなく、目標設定・優先順位・改善活動にも参加している。</div></div>
+    <div class="diag-item"><div class="d-num">7</div><div class="d-text">顧客から受け取った意見について、「何をどのように変更したか」を顧客へ返している。</div></div>
+  </div>
+
+  <div class="diag-group">
+    <span class="dg-label" style="background:#EEF2FF;color:var(--primary)">D. 共有体験・改善履歴</span>
+    <div class="diag-item"><div class="d-num">8</div><div class="d-text">過去の判断理由、合意内容、約束、トラブル、改善内容が記録され、次の対応に活用されている。</div></div>
+    <div class="diag-item"><div class="d-num">9</div><div class="d-text">顧客と一緒に乗り越えた課題や成功体験が、その後の提案・対応・関係づくりに生かされている。</div></div>
+  </div>
+
+  <div class="diag-group">
+    <span class="dg-label" style="background:#EEF2FF;color:var(--primary)">E. 時間による蓄積</span>
+    <div class="diag-item"><div class="d-num">10</div><div class="d-text">運用を継続するほど顧客理解が深まり、提供する支援の精度や価値が高くなる。</div></div>
+    <div class="diag-item"><div class="d-num">11</div><div class="d-text">担当者が変更されても、過去の知識・関係性・改善履歴が、組織として引き継がれる。</div></div>
+  </div>
+
+  <div class="diag-group">
+    <span class="dg-label" style="background:#EEF2FF;color:var(--primary)">F. 顧客固有の現場文脈</span>
+    <div class="diag-item"><div class="d-num">12</div><div class="d-text">マニュアル上の業務だけでなく、顧客固有の例外、暗黙のルール、社内事情、実際の利用環境まで理解している。</div></div>
+    <div class="diag-item"><div class="d-num">13</div><div class="d-text">AIが作成した回答や提案を、その顧客の現場事情に合わせて人が確認・修正している。</div></div>
+  </div>
+
+  <div class="diag-group">
+    <span class="dg-label" style="background:#EEF2FF;color:var(--primary)">G. 責任体制</span>
+    <div class="diag-item"><div class="d-num">14</div><div class="d-text">顧客接点ごとに、誰が判断し、誰が説明し、問題発生時に誰へエスカレーションするかが明確になっている。</div></div>
+    <div class="diag-item"><div class="d-num">15</div><div class="d-text">重要な約束、失敗、クレーム、例外対応について、責任者が説明し、その後の対応まで引き受けている。<br><small style="opacity:.7">責任ある対応の積み重ねが、信頼という関係資産につながる。</small></div></div>
+  </div>
+
+  <h3>診断結果の見方</h3>
+  <div class="two-col">
+    <div>
+      <h4>AI代替リスク（3問・15点満点）</h4>
+      <table class="t">
+        <tr><th>スコア</th><th>状態</th></tr>
+        <tr><td>12〜15点</td><td>代替リスクが高い</td></tr>
+        <tr><td>8〜11点</td><td>代替リスクが中程度</td></tr>
+        <tr><td>3〜7点</td><td>代替リスクが低い</td></tr>
+      </table>
+    </div>
+    <div>
+      <h4>関係資産（各分野・10点満点）</h4>
+      <table class="t">
+        <tr><th>スコア</th><th>状態</th></tr>
+        <tr><td>8〜10点</td><td>継続的に蓄積されている</td></tr>
+        <tr><td>5〜7点</td><td>一部あるが属人的</td></tr>
+        <tr><td>2〜4点</td><td>未整備・蓄積が弱い</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <h3>4象限分類</h3>
+  <div class="card-grid">
+    <div class="card" style="border-left:3px solid #E74C3C"><h4>① リスク高・資産弱</h4><p style="font-size:13.5px">顧客接点と提供価値の再設計を最優先で行う。</p></div>
+    <div class="card" style="border-left:3px solid #F39C12"><h4>② リスク高・資産強</h4><p style="font-size:13.5px">定型業務のAI化を進め、顧客との共創・信頼をさらに強化する。</p></div>
+    <div class="card" style="border-left:3px solid #3498DB"><h4>③ リスク低・資産弱</h4><p style="font-size:13.5px">将来に備えて、顧客理解や改善履歴を仕組み化する。</p></div>
+    <div class="card" style="border-left:3px solid var(--green-light)"><h4>④ リスク低・資産強</h4><p style="font-size:13.5px">成功している運用を標準化し、他の顧客・事業へ展開する。</p></div>
+  </div>
+</div>
+
+<!-- YAKUWARI -->
+<div class="section" id="yakuwari">
+  <div class="sec-label">Mechanism ②</div>
+  <h2>AI／人間の役割分担設計</h2>
+  <p>顧客接点ごとに設計する項目は以下の通り。</p>
+  <table class="t">
+    <tr><th>設計項目</th><th>内容</th></tr>
+    <tr><td>顧客接点</td><td>問い合わせ・オンボーディング・定例会・トラブル対応・更新提案など</td></tr>
+    <tr><td>顧客の目的・状態</td><td>何を求めているか、どのような感情にあるか</td></tr>
+    <tr><td>担当区分</td><td>AI中心 / 人中心 / AIと人の共同</td></tr>
+    <tr><td>AIの役割</td><td>情報収集・要約・分類・初稿作成・データ分析・予兆検知など</td></tr>
+    <tr><td>人の役割</td><td>背景理解・意味の解釈・判断・調整・対話・説明・約束・責任など</td></tr>
+    <tr><td>人へ切り替える条件</td><td>顧客の不満・例外対応・重要判断・高額案件・契約や信頼への影響</td></tr>
+    <tr><td>最終責任者</td><td>誰が最終判断を行い、顧客へ説明し、結果を引き受けるか</td></tr>
+    <tr><td>蓄積する関係資産</td><td>顧客理解・関係性・共有体験・改善履歴・現場文脈・守った約束</td></tr>
+    <tr><td>確認する成果</td><td>利用定着・問題解決・継続率・信頼・改善数・紹介・追加相談</td></tr>
+  </table>
+
+  <h3>役割分担の基本原則</h3>
+  <div class="two-col">
+    <div class="col-card ai">
+      <h4><span class="badge">AI中心</span> 向きの業務</h4>
+      <ul class="sl">
+        <li>発生頻度が高い</li>
+        <li>手順や正解が明確</li>
+        <li>顧客ごとの差が少ない</li>
+        <li>間違えても修正しやすい</li>
+        <li>感情や事業への影響が小さい</li>
+      </ul>
+    </div>
+    <div class="col-card human">
+      <h4><span class="badge">人中心</span> 向きの業務</h4>
+      <ul class="sl">
+        <li>顧客固有の事情が大きい</li>
+        <li>感情が大きく動いている</li>
+        <li>利害調整が必要</li>
+        <li>重要な判断や約束を伴う</li>
+        <li>契約・売上・信頼への影響が大きい</li>
+        <li>失敗時に説明や責任が必要</li>
+      </ul>
+    </div>
+  </div>
+  <div class="col-card both">
+    <h4><span class="badge">AI×人 共同</span> 向きの業務</h4>
+    <ul class="sl">
+      <li>AIが情報を集め、人が意味を解釈する</li>
+      <li>AIが初稿を作り、人が顧客に合わせて修正する</li>
+      <li>AIがリスクを検知し、人が介入の必要性を判断する</li>
+      <li>AIが選択肢を出し、人が決定して説明する</li>
+    </ul>
+  </div>
+  <div class="hl">
+    <strong>AIは処理・整理を担い、人は意味づけ・判断・対話・責任を担う</strong>
+    AIによって生まれた時間を、顧客との対話や個別支援・改善提案に使うことで、効率化と同時に関係資産を増やす。
+  </div>
+</div>
+
+<!-- REPORT -->
+<div class="section" id="report">
+  <div class="sec-label">Mechanism ③</div>
+  <h2>関係資産・成果レポート</h2>
+  <div class="hl accent">
+    <strong>「作業量」から「関係資産の蓄積量」へ</strong>
+    工数削減を最終成果にするのではなく、生まれた余白を何に再投資し、その結果どのような成果と関係資産が生まれたかまでセットで見せる。
+  </div>
+  <h3>レポートの構成</h3>
+  <div class="card-grid">
+    <div class="card"><h4>今月実現できたこと</h4><p style="font-size:13px">利用定着・課題解決・解約回避・業務改善・追加相談など</p></div>
+    <div class="card"><h4>AIで効率化したこと</h4><p style="font-size:13px">どの業務をAIに任せ、どのくらい時間・負担を削減できたか</p></div>
+    <div class="card"><h4>生まれた余白の再投資先</h4><p style="font-size:13px">顧客との対話・個別支援・改善提案・リスク顧客への対応など</p></div>
+    <div class="card"><h4>新しく理解できたこと</h4><p style="font-size:13px">顧客の背景・価値観・現場事情・意思決定構造・成功/失敗パターン</p></div>
+    <div class="card">
+      <h4>新たに蓄積された関係資産</h4>
+      <ul class="sl" style="font-size:13px">
+        <li>新たにつながった関係者</li>
+        <li>顧客と一緒に解決した課題</li>
+        <li>顧客の声をもとに行った改善</li>
+        <li>守った約束と積み重ねた信頼</li>
+        <li>共有された成功体験</li>
+        <li>新しく得られた現場ノウハウ</li>
+      </ul>
+    </div>
+    <div class="card"><h4>運用に反映した学習</h4><p style="font-size:13px">分かったことを、マニュアル・判断基準・AI指示にどう反映したか</p></div>
+    <div class="card"><h4>現在の重要課題</h4><p style="font-size:13px">来月以降に解決すべきこと</p></div>
+    <div class="card"><h4>次月の最優先事項</h4><p style="font-size:13px">最重要行動を1〜3件に絞り、担当者と期限を決める</p></div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- SERVICE FLOW -->
+<div class="section" id="dosen">
+  <div class="sec-label">Service Design</div>
+  <h2>サービス導線</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-lbl">入口</div>
+      <h4>診断</h4>
+      <p>AIや他社への代替リスクと、現在蓄積されている関係資産を可視化する。</p>
+    </div>
+    <div class="step">
+      <div class="step-lbl">Step 2</div>
+      <h4>初期設計</h4>
+      <p>診断結果をもとに、AIと人の役割・顧客接点・責任者・エスカレーション・蓄積する顧客情報や改善履歴を設計する。</p>
+    </div>
+    <div class="step">
+      <div class="step-lbl">継続</div>
+      <h4>継続運用</h4>
+      <p>APがCS・運用に伴走しながら、毎月「関係資産・成果レポート」を提出。レポートをもとに、何が成果につながったか・どの関係資産が増えたか・次に何を改善するかをクライアントと一緒に確認する。</p>
+    </div>
+  </div>
+</div>
+
+<!-- VALUE -->
+<div class="section" id="value">
+  <div class="sec-label">Core Value</div>
+  <h2>APが提供する価値</h2>
+  <div class="hl">
+    <strong>APは、単発の成果物を納品する会社ではなく</strong>
+    運用を続けるほど、顧客理解・改善履歴・信頼・人とのつながり・運用ノウハウが蓄積されるパートナーになる。
+  </div>
+  <div class="two-col">
+    <div>
+      <h4>クライアントにとっての価値</h4>
+      <ul class="sl">
+        <li>利用定着・契約継続</li>
+        <li>紹介・追加提案</li>
+        <li>新しい事業機会</li>
+        <li>単なるコスト削減を超えた成果</li>
+      </ul>
+    </div>
+    <div>
+      <h4>APにとっての価値</h4>
+      <ul class="sl">
+        <li>価格競争に巻き込まれない</li>
+        <li>解約されにくい関係性</li>
+        <li>蓄積された運用ノウハウ</li>
+        <li>AIでは代替できない競争優位</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- KENSHIN EVOLUTION -->
+<div class="section" id="kenshin-evo">
+  <div class="sec-label">Kenshin</div>
+  <h2>EC診断「Kenshin」の進化</h2>
+  <p>現在のKenshinを否定するのではなく、APが目指す「AIで効率化し、人との関係を資産に変える」という考え方まで診断できるものへ進化させる。</p>
+  <div class="evo">
+    <div class="evo-card before">
+      <div class="evo-lbl">現在のKenshin</div>
+      <h4>ECのどこに課題があるかを見つける診断</h4>
+      <p style="font-size:13px;color:var(--text2);margin-top:6px">売上・集客・CVR・運用体制などの課題を可視化する</p>
+    </div>
+    <div class="evo-arrow">→</div>
+    <div class="evo-card after">
+      <div class="evo-lbl">これからのKenshin</div>
+      <h4>何をAIに任せ、どこで人が関わり、何を関係資産として残すかを決める診断</h4>
+      <p style="font-size:13px;color:var(--text2);margin-top:6px">EC課題の発見から、AIと人の最適な役割設計まで一貫して行う</p>
+    </div>
+  </div>
+  <div class="hl accent">
+    <strong>最も大切なエッセンス：AIで生まれた余白を、何に再投資するかまで診断する</strong>
+    「AIで何時間生み出せるか」だけでなく、「その時間を、どの顧客接点へ再投資すれば関係資産が増えるか」まで導き出す。ここが一般的なAI診断とAPの診断を分ける最大のポイント。
+  </div>
+</div>
+
+<!-- KENSHIN 5 AXES -->
+<div class="section" id="kenshin-5">
+  <div class="sec-label">Kenshin — 診断設計</div>
+  <h2>5つの診断軸</h2>
+
+  <div class="axis-card">
+    <div class="axis-num">①</div>
+    <div class="axis-content">
+      <h4>ECの基礎健康度</h4>
+      <p>集客・売上・CVR・リピート・LTV・UI/UX・CRM・データ活用・運用体制を見て、現在のECの課題を確認する。さらに、課題が「AIで処理すべきもの」「人が向き合うべきもの」「仕組みや組織を変えるべきもの」かまで分類する。</p>
+      <div class="tags" style="margin-top:8px">
+        <span class="tag">現在のKenshinを活用</span>
+        <span class="tag a">課題を3種類に分類</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="axis-card">
+    <div class="axis-num">②</div>
+    <div class="axis-content">
+      <h4>AIによる効率化余地</h4>
+      <p>発生頻度・手順の明確さ・顧客ごとの差・失敗時の影響・データ整備状況を確認し、AI化できる業務を特定する。診断結果では「AIに任せる業務TOP3」と「削減できる時間の目安」を出す。</p>
+      <div class="tags" style="margin-top:8px">
+        <span class="tag">商品説明の初稿</span>
+        <span class="tag">問い合わせ分類</span>
+        <span class="tag">FAQ回答候補</span>
+        <span class="tag">レポート集計</span>
+        <span class="tag">議事録</span>
+        <span class="tag">顧客レビュー分析</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="axis-card">
+    <div class="axis-num">③</div>
+    <div class="axis-content">
+      <h4>人が担うべき重要接点</h4>
+      <p>感情・個別事情・例外対応・契約や信頼への影響が大きい顧客接点を特定。「人が関わるべき顧客接点TOP3」と「AI対応から人へ切り替える条件」を出す。</p>
+      <div class="tags" style="margin-top:8px">
+        <span class="tag">高額商品の購入相談</span>
+        <span class="tag">クレーム・返品</span>
+        <span class="tag">VIP顧客対応</span>
+        <span class="tag">顧客インタビュー</span>
+        <span class="tag">契約更新・継続提案</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="axis-card" style="border-left:3px solid var(--accent)">
+    <div class="axis-num" style="background:var(--accent)">④</div>
+    <div class="axis-content">
+      <h4>関係資産の蓄積度 ← AP独自の診断軸</h4>
+      <p>顧客理解・信頼・共有体験・改善履歴・人的なつながり・現場ノウハウの蓄積状態を診断。「現在蓄積されている関係資産」「失われやすい関係資産」「これから優先的に増やす関係資産」を可視化する。</p>
+      <div class="tags" style="margin-top:8px">
+        <span class="tag a">顧客の価値観・目標の理解</span>
+        <span class="tag a">改善フィードバックの実施</span>
+        <span class="tag a">過去の約束・判断の記録</span>
+        <span class="tag a">組織への知識移管</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="axis-card">
+    <div class="axis-num">⑤</div>
+    <div class="axis-content">
+      <h4>AIで生まれた余白の再投資</h4>
+      <p>AIで削減した時間を把握し、その時間を何に使うか決め、顧客との対話や改善へ再投資できているか、再投資した結果を測定できているかを診断する。</p>
+      <div class="hl" style="margin-top:10px;padding:12px 14px;font-size:13px">
+        例）問い合わせ分類をAI化して月20時間削減<br>
+        → その20時間を顧客インタビューと休眠顧客の個別対応へ再投資<br>
+        → 顧客理解・改善案・再購入・信頼が増える
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- KENSHIN TYPE -->
+<div class="section" id="kenshin-type">
+  <div class="sec-label">Kenshin — 診断結果</div>
+  <h2>4タイプのマトリクス</h2>
+  <p>「AI活用・効率化度」と「関係資産の蓄積度」の2軸で4タイプに分類する。</p>
+  <div class="mat-axis">関係資産の蓄積度 ↑ 高い</div>
+  <div class="matrix">
+    <div class="mx">
+      <div class="type-tag">AI活用：低 ／ 関係資産：高</div>
+      <h4>属人伴走型</h4>
+      <p style="font-size:13px">顧客との関係は強いが、担当者の頑張りに依存。AI化・標準化・組織への知識移管が必要。</p>
+    </div>
+    <div class="mx target">
+      <div class="type-tag">AI活用：高 ／ 関係資産：高</div>
+      <h4>★ 関係資産型運用</h4>
+      <p style="font-size:13px">AIで業務を効率化し、人が重要な顧客接点に集中。運用を続けるほど顧客理解・信頼・改善履歴が組織に蓄積される。<br><strong style="color:#FFD166;font-size:12px">← APが目指す状態</strong></p>
+    </div>
+    <div class="mx">
+      <div class="type-tag">AI活用：低 ／ 関係資産：低</div>
+      <h4>手作業依存型</h4>
+      <p style="font-size:13px">日々の作業に追われ、顧客理解や改善まで手が回っていない。AI活用も関係資産も弱い。</p>
+    </div>
+    <div class="mx">
+      <div class="type-tag">AI活用：高 ／ 関係資産：低</div>
+      <h4>効率化先行型</h4>
+      <p style="font-size:13px">AI化は進んでいるが、顧客との関係が薄い。効率は良いが、価格や機能で代替されやすい。</p>
+    </div>
+  </div>
+  <div class="mat-sides"><span>← AI活用・効率化度 低い</span><span>AI活用・効率化度 高い →</span></div>
+  <div class="mat-axis">関係資産の蓄積度 ↓ 低い</div>
+</div>
+
+<!-- KENSHIN RESULT -->
+<div class="section" id="kenshin-result">
+  <div class="sec-label">Kenshin — 診断結果設計</div>
+  <h2>診断結果で必ず返すもの</h2>
+  <p>診断結果は単なる採点表ではなく、<strong>「AIと人のEC運用処方箋」</strong>として渡す。</p>
+  <div class="result-grid">
+    <div class="result-item"><div class="num">1</div><div class="lbl">現在の<br>EC課題</div></div>
+    <div class="result-item"><div class="num">2</div><div class="lbl">AIに任せる業務<br>TOP3</div></div>
+    <div class="result-item"><div class="num">3</div><div class="lbl">人が担う<br>顧客接点TOP3</div></div>
+    <div class="result-item"><div class="num">4</div><div class="lbl">優先的に増やす<br>関係資産TOP3</div></div>
+    <div class="result-item"><div class="num">5</div><div class="lbl">90日間の<br>改善計画</div></div>
+  </div>
+  <div class="card">
+    <h4>90日間の改善計画に含まれる内容</h4>
+    <ul class="sl">
+      <li>何をAI化するか</li>
+      <li>誰が責任を持つか</li>
+      <li>生まれた時間を何に使うか</li>
+      <li>どの成果と関係資産を測るか</li>
+    </ul>
+  </div>
+
+  <h3>診断体験自体もAI×人で設計する</h3>
+  <div class="two-col">
+    <div class="col-card ai">
+      <h4><span class="badge">AI</span> が担う部分</h4>
+      <ul class="sl">
+        <li>回答内容の集計</li>
+        <li>データ整理</li>
+        <li>課題候補の抽出</li>
+        <li>レポートの初稿作成</li>
+        <li>改善施策の候補出し</li>
+      </ul>
+    </div>
+    <div class="col-card human">
+      <h4><span class="badge">人</span> が担う部分</h4>
+      <ul class="sl">
+        <li>数字の背景を聞く</li>
+        <li>本当の課題を見極める</li>
+        <li>顧客固有の事情を理解する</li>
+        <li>AI化してはいけない場面を判断</li>
+        <li>優先順位を一緒に決める</li>
+        <li>90日間の約束を決める</li>
+      </ul>
+    </div>
+  </div>
+  <div class="hl green">
+    <strong>診断自体がAPとクライアントの関係資産の起点となる</strong>
+    診断結果を自動送信して終わるのではなく、AIが診断を効率化し、APの人がクライアントと一緒に結果を解釈する。この対話から、関係資産が始まる。
+  </div>
+
+  <h3>Kenshinのサービス導線</h3>
+  <div class="steps">
+    <div class="step"><div class="step-lbl">STEP 1</div><h4>3分の簡易診断</h4><p>オンラインで回答し、現在のタイプと課題の概要を表示する。</p></div>
+    <div class="step"><div class="step-lbl">STEP 2</div><h4>APによる深掘り診断</h4><p>GA・運用内容・組織体制・顧客接点を確認する。</p></div>
+    <div class="step"><div class="step-lbl">STEP 3</div><h4>診断結果の共同確認</h4><p>APが一方的に説明するのではなく、クライアントと一緒に優先順位を決める。</p></div>
+    <div class="step"><div class="step-lbl">STEP 4</div><h4>90日間の改善運用</h4><p>AI化・人の接点強化・関係資産の蓄積を実行する。</p></div>
+    <div class="step"><div class="step-lbl">STEP 5</div><h4>再診断</h4><p>削減できた時間・再投資した活動・事業成果・増えた関係資産を確認する。</p></div>
+  </div>
+</div>
+
+<!-- KENSHIN DEF -->
+<div class="section" id="kenshin-def">
+  <div class="sec-label">Kenshin — Definition</div>
+  <h2>Kenshinの定義</h2>
+  <div class="hl">
+    <strong>Kenshinは、ECサイトの課題を見つけるだけの診断ではありません。</strong>
+    現在のEC成果と運用体制を分析し、AIに任せる業務、人が担うべき顧客接点、蓄積すべき関係資産を明確にします。AIで生まれた時間を、顧客理解・対話・共創・改善へ再投資し、運用を続けるほど顧客との関係と事業ノウハウが蓄積される状態を目指します。
+  </div>
+  <div class="hl accent" style="margin-top:12px">
+    <strong>一言で表すと</strong>
+    「ECの問題を見つける診断」から、「AIと人の最適な役割を決め、選ばれ続ける理由をつくる診断」へ。
+  </div>
+  <div style="background:linear-gradient(135deg,var(--primary),var(--primary-light));border-radius:12px;padding:36px;text-align:center;margin-top:24px">
+    <p style="font-size:12px;opacity:.6;margin-bottom:10px;color:#fff">APの考える「関係資産型CS・運用」</p>
+    <h2 style="color:#fff;font-size:24px;line-height:1.45">AIで効率化し、<br>人との関係を資産に変える。</h2>
+    <p style="font-size:13.5px;color:rgba(255,255,255,.8);margin-top:14px;max-width:460px;margin-left:auto;margin-right:auto">AIを導入すること自体を目的にするのではなく、AIを活用することで、人が顧客と向き合う時間を増やし、選ばれ続ける理由をつくる。</p>
+  </div>
+</div>
+
+</div><!-- /content -->
+
+<div class="footer">
+  <p>Artpeace株式会社 — 関係資産型CS・運用戦略ドキュメント 2025</p>
+  <p style="margin-top:4px">テクノロジー × ハートで関わる人達の日常をもっと元気に、もっと笑顔に</p>
+</div>
+
+</main>
+
+<script>
+document.querySelectorAll('.nav a').forEach(a=>{
+  a.addEventListener('click',e=>{
+    e.preventDefault();
+    const t=document.querySelector(a.getAttribute('href'));
+    if(t)t.scrollIntoView({behavior:'smooth',block:'start'});
+  });
+});
+const secs=document.querySelectorAll('[id]');
+const links=document.querySelectorAll('.nav a');
+window.addEventListener('scroll',()=>{
+  let cur='';
+  secs.forEach(s=>{if(window.scrollY+80>=s.offsetTop)cur=s.id});
+  links.forEach(a=>{
+    const active=a.getAttribute('href')==='#'+cur;
+    a.classList.toggle('active',active);
+  });
+});
+</script>
+</body>
+</html>
